@@ -1,0 +1,537 @@
+html_content = """<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI Dashboard | Staffbase Shift Swap Impact</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* STIHL x Staffbase Color Palette */
+            --stihl-orange: #FF8200;
+            --staffbase-navy: #111827;
+            --staffbase-blue: #1E40AF;
+            --success: #059669;
+            --danger: #DC2626;
+            --bg-slate: #F8FAFC;
+            --card-white: #FFFFFF;
+            --border-light: #E2E8F0;
+            --text-main: #1F2937;
+            --text-muted: #64748B;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-slate);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+        }
+
+        /* --- Header --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.25rem;
+            color: var(--staffbase-navy);
+            letter-spacing: -0.025em;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 1.125rem;
+        }
+
+        .logo-placeholder {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: var(--stihl-orange);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-placeholder span {
+            color: var(--staffbase-navy);
+        }
+
+        /* --- Main Layout --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- Sidebar & Inputs --- */
+        .card-sidebar {
+            background: var(--card-white);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-light);
+            height: fit-content;
+        }
+
+        .section-heading {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.125rem;
+            margin-bottom: 1.5rem;
+            color: var(--staffbase-navy);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-group {
+            margin-bottom: 1.75rem;
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .label-row label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-main);
+        }
+
+        .value-badge {
+            background: #FFF7ED;
+            color: var(--stihl-orange);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            border: 1px solid #FFEDD5;
+        }
+
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]:focus { outline: none; }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: var(--border-light);
+            border-radius: 3px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: var(--stihl-orange);
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -7px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        input[type=range]:active::-webkit-slider-thumb {
+            transform: scale(1.2);
+        }
+
+        /* --- Results Area --- */
+        .results-main {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* KPI Row */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .kpi-grid { grid-template-columns: 1fr; }
+        }
+
+        .kpi-card {
+            background: var(--card-white);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .kpi-card.highlight {
+            background: var(--staffbase-navy);
+            color: white;
+            border: none;
+        }
+
+        .kpi-card .kpi-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-card.highlight .kpi-label { color: #9CA3AF; }
+
+        .kpi-card .kpi-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.875rem;
+            font-weight: 700;
+        }
+
+        .kpi-card.highlight .kpi-value { color: var(--stihl-orange); }
+
+        /* Break Even Visuals */
+        .be-visual-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .be-item {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            background: #EBF5FF;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid #DBEAFE;
+        }
+
+        .be-item.success {
+            background: #ECFDF5;
+            border-color: #D1FAE5;
+        }
+
+        .be-icon-circle {
+            width: 54px;
+            height: 54px;
+            background: white;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .be-content h4 {
+            font-size: 0.875rem;
+            color: var(--staffbase-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .be-item.success h4 { color: #065F46; }
+
+        .be-content p {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--staffbase-navy);
+        }
+
+        /* --- Chart Area --- */
+        .chart-card {
+            background: var(--card-white);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.75rem;
+        }
+
+        .bar-wrapper {
+            width: 100%;
+        }
+
+        .bar-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .bar-rail {
+            width: 100%;
+            height: 36px;
+            background: #F1F5F9;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #E2E8F0;
+        }
+
+        .bar-fill {
+            height: 100%;
+            transition: width 1s cubic-bezier(0.19, 1, 0.22, 1);
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .bar-fill.primary { background: var(--staffbase-navy); }
+        .bar-fill.secondary { background: var(--success); }
+        .bar-fill.accent { background: var(--stihl-orange); }
+
+        /* --- Footer --- */
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border-light);
+            padding-top: 2rem;
+        }
+
+        .disclaimer {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #FFFBEB;
+            border: 1px dashed #FEF3C7;
+            border-radius: 0.5rem;
+            color: #92400E;
+            font-size: 0.8125rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-title">
+            <h1>Staffbase ROI Case</h1>
+            <p>Shift Swap Integration & Impact-Analyse</p>
+        </div>
+        <div class="logo-placeholder">
+            STIHL <span>| Staffbase</span>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <aside class="card-sidebar">
+            <h2 class="section-heading">Variablen</h2>
+            
+            <div class="input-group">
+                <div class="label-row">
+                    <label for="employees">Schichtmitarbeiter</label>
+                    <span class="value-badge" id="val-employees">1.500</span>
+                </div>
+                <input type="range" id="employees" min="500" max="6000" step="100" value="1500">
+            </div>
+
+            <div class="input-group">
+                <div class="label-row">
+                    <label for="sickdays">Krankheitstage Ø / Jahr</label>
+                    <span class="value-badge" id="val-sickdays">20</span>
+                </div>
+                <input type="range" id="sickdays" min="5" max="40" step="1" value="20">
+            </div>
+
+            <div class="input-group">
+                <div class="label-row">
+                    <label for="daycost">Kosten / Tag (€)</label>
+                    <span class="value-badge" id="val-daycost">500</span>
+                </div>
+                <input type="range" id="daycost" min="300" max="800" step="25" value="500">
+            </div>
+
+            <div class="input-group">
+                <div class="label-row">
+                    <label for="appcost">Investition App / Jahr</label>
+                    <span class="value-badge" id="val-appcost">100.000</span>
+                </div>
+                <input type="range" id="appcost" min="20000" max="250000" step="5000" value="100000">
+            </div>
+
+            <div class="input-group" style="padding-top: 1rem; border-top: 1px solid var(--border-light);">
+                <div class="label-row">
+                    <label for="reduction">Erwartete Reduktion (%)</label>
+                    <span class="value-badge" id="val-reduction" style="background: #ECFDF5; color: var(--success); border-color: #D1FAE5;">5.0</span>
+                </div>
+                <input type="range" id="reduction" min="0.5" max="12" step="0.5" value="5.0">
+            </div>
+        </aside>
+
+        <main class="results-main">
+            
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Ausfallkosten (IST)</div>
+                    <div class="kpi-value" id="res-current">15,0 Mio €</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Ersparnis (Brutto)</div>
+                    <div class="kpi-value" id="res-gross" style="color: var(--success);">750.000 €</div>
+                </div>
+                <div class="kpi-card highlight">
+                    <div class="kpi-label">Netto ROI (Cash)</div>
+                    <div class="kpi-value" id="res-netto">650.000 €</div>
+                </div>
+            </div>
+
+            <div class="be-visual-grid">
+                <div class="be-item">
+                    <div class="be-icon-circle">🎯</div>
+                    <div class="be-content">
+                        <h4>Break-Even Schwelle</h4>
+                        <p id="be-days">200 Tage</p>
+                    </div>
+                </div>
+                <div class="be-item success">
+                    <div class="be-icon-circle">🛡️</div>
+                    <div class="be-content">
+                        <h4>Risiko-Hürde</h4>
+                        <p id="be-ratio">1 von 7.5 MA</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3 class="section-heading" style="margin-bottom: 2rem;">Finanzielle Projektion</h3>
+                <div class="chart-container">
+                    <div class="bar-wrapper">
+                        <div class="bar-info"><span>Heutige Ausfallkosten</span> <span id="label-bar-old">15.000.000 €</span></div>
+                        <div class="bar-rail"><div class="bar-fill primary" id="bar-old" style="width: 100%;"></div></div>
+                    </div>
+                    <div class="bar-wrapper">
+                        <div class="bar-info"><span>Kosten mit Staffbase</span> <span id="label-bar-new">14.250.000 €</span></div>
+                        <div class="bar-rail"><div class="bar-fill secondary" id="bar-new" style="width: 95%;"></div></div>
+                    </div>
+                    <div class="bar-wrapper">
+                        <div class="bar-info" style="color: var(--stihl-orange);"><span>Reiner Netto-Mehrwert (Gewinn)</span> <span id="label-bar-roi">650.000 €</span></div>
+                        <div class="bar-rail"><div class="bar-fill accent" id="bar-roi" style="width: 5%;"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="disclaimer">
+                <strong>Hintergrund der Risiko-Hürde:</strong> Dieser Wert gibt an, wie viele Mitarbeiter lediglich <strong>einen einzigen Krankheitstag</strong> im Jahr einsparen müssen, damit sich die App-Kosten zu 100% selbst tragen. Ein Wert von "1 von 10" bedeutet ein extrem geringes Umsetzungsrisiko.
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        &copy; 2026 Staffbase GmbH | ROI-Simulator v2.0 | Vertrauliches Beratungsdokument
+    </footer>
+</div>
+
+<script>
+    // Slider und Labels
+    const sliders = ['employees', 'sickdays', 'daycost', 'appcost', 'reduction'];
+    
+    function formatCurrency(val) {
+        if (val >= 1000000) return (val / 1000000).toFixed(1).replace('.', ',') + ' Mio €';
+        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val);
+    }
+
+    function updateDashboard() {
+        // Werte auslesen
+        const emp = parseInt(document.getElementById('employees').value);
+        const sd = parseInt(document.getElementById('sickdays').value);
+        const dc = parseInt(document.getElementById('daycost').value);
+        const ac = parseInt(document.getElementById('appcost').value);
+        const red = parseFloat(document.getElementById('reduction').value) / 100;
+
+        // Labels aktualisieren
+        document.getElementById('val-employees').innerText = emp.toLocaleString('de-DE');
+        document.getElementById('val-sickdays').innerText = sd;
+        document.getElementById('val-daycost').innerText = dc;
+        document.getElementById('val-appcost').innerText = ac.toLocaleString('de-DE');
+        document.getElementById('val-reduction').innerText = (red * 100).toFixed(1);
+
+        // Berechnungen
+        const totalSickDays = emp * sd;
+        const currentCost = totalSickDays * dc;
+        const savedDays = totalSickDays * red;
+        const grossSavings = savedDays * dc;
+        const netRoi = grossSavings - ac;
+        
+        const beDaysTotal = ac / dc;
+        const beRatio = emp / beDaysTotal;
+
+        // KPI Anzeige
+        document.getElementById('res-current').innerText = formatCurrency(currentCost);
+        document.getElementById('res-gross').innerText = formatCurrency(grossSavings);
+        document.getElementById('res-netto').innerText = formatCurrency(netRoi);
+
+        // Break-Even Anzeige
+        document.getElementById('be-days').innerText = Math.round(beDaysTotal) + " Tage";
+        document.getElementById('be-ratio').innerText = "1 von " + beRatio.toFixed(1) + " MA";
+
+        // Chart Skalierung & Beschriftung
+        const maxVal = currentCost;
+        document.getElementById('label-bar-old').innerText = formatCurrency(currentCost);
+        document.getElementById('label-bar-new').innerText = formatCurrency(currentCost - grossSavings);
+        document.getElementById('label-bar-roi').innerText = formatCurrency(netRoi);
+
+        // Balkenbreiten (CSS Width)
+        document.getElementById('bar-new').style.width = ((currentCost - grossSavings) / maxVal * 100) + "%";
+        
+        // ROI Balken Logik (darf nicht negativ sein für Visual)
+        const roiWidth = (netRoi / maxVal * 100);
+        document.getElementById('bar-roi').style.width = (roiWidth > 0 ? roiWidth : 0) + "%";
+    }
+
+    // Event Listener für alle Slider
+    sliders.forEach(id => {
+        document.getElementById(id).addEventListener('input', updateDashboard);
+    });
+
+    // Initialer Aufruf
+    updateDashboard();
+</script>
+
+</body>
+</html>"""
+
+with open("staffbase_stihl_roi_dashboard.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
