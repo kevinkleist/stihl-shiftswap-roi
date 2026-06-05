@@ -113,6 +113,30 @@
             letter-spacing: 0.05em;
         }
 
+        /* Collapsible Variablen panel.
+           Desktop: locked open, renders exactly like the old static heading.
+           Mobile: a tappable header that folds the sliders away (see media query). */
+        .variables-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            list-style: none;          /* hide default disclosure triangle */
+            pointer-events: none;      /* not collapsible on desktop */
+        }
+
+        .variables-summary::-webkit-details-marker { display: none; }
+        .variables-summary::marker { content: ""; }
+
+        .vp-chevron {
+            flex-shrink: 0;
+            color: var(--text-muted);
+            transition: transform 0.2s ease;
+            display: none;             /* shown only on mobile */
+        }
+
+        .variables-panel[open] .vp-chevron { transform: rotate(180deg); }
+
         .input-group {
             margin-bottom: 1.75rem;
         }
@@ -414,7 +438,31 @@
             }
 
             .card-sidebar {
-                padding: 1.5rem;
+                padding: 1.25rem 1.25rem;
+            }
+
+            /* Make the panel collapsible and obviously tappable */
+            .variables-summary {
+                pointer-events: auto;
+                cursor: pointer;
+                margin-bottom: 1.25rem;
+            }
+
+            .variables-panel:not([open]) .variables-summary {
+                margin-bottom: 0;      /* no dangling gap when collapsed */
+            }
+
+            .vp-chevron {
+                display: block;
+            }
+
+            /* Compact sliders so the controls don't crowd out the results */
+            .input-group {
+                margin-bottom: 1.125rem;
+            }
+
+            .label-row {
+                margin-bottom: 0.4rem;
             }
 
             .results-main {
@@ -459,7 +507,13 @@
 
     <div class="dashboard-grid">
         <aside class="card-sidebar">
-            <h2 class="section-heading">Variablen</h2>
+            <details class="variables-panel" open>
+                <summary class="section-heading variables-summary">
+                    <span>Variablen</span>
+                    <svg class="vp-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </summary>
+
+                <div class="variables-body">
 
             <div class="input-group">
                 <div class="label-row">
@@ -500,6 +554,9 @@
                 </div>
                 <input type="range" id="reduction" min="0.5" max="12" step="0.5" value="5.0">
             </div>
+
+                </div>
+            </details>
         </aside>
 
         <main class="results-main">
