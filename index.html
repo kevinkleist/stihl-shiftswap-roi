@@ -1,4 +1,4 @@
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -359,7 +359,7 @@ html_content = """<!DOCTYPE html>
     <div class="dashboard-grid">
         <aside class="card-sidebar">
             <h2 class="section-heading">Variablen</h2>
-            
+
             <div class="input-group">
                 <div class="label-row">
                     <label for="employees">Schichtmitarbeiter</label>
@@ -402,7 +402,7 @@ html_content = """<!DOCTYPE html>
         </aside>
 
         <main class="results-main">
-            
+
             <div class="kpi-grid">
                 <div class="kpi-card">
                     <div class="kpi-label">Ausfallkosten (IST)</div>
@@ -467,7 +467,7 @@ html_content = """<!DOCTYPE html>
 <script>
     // Slider und Labels
     const sliders = ['employees', 'sickdays', 'daycost', 'appcost', 'reduction'];
-    
+
     function formatCurrency(val) {
         if (val >= 1000000) return (val / 1000000).toFixed(1).replace('.', ',') + ' Mio €';
         return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val);
@@ -494,7 +494,7 @@ html_content = """<!DOCTYPE html>
         const savedDays = totalSickDays * red;
         const grossSavings = savedDays * dc;
         const netRoi = grossSavings - ac;
-        
+
         const beDaysTotal = ac / dc;
         const beRatio = emp / beDaysTotal;
 
@@ -515,7 +515,7 @@ html_content = """<!DOCTYPE html>
 
         // Balkenbreiten (CSS Width)
         document.getElementById('bar-new').style.width = ((currentCost - grossSavings) / maxVal * 100) + "%";
-        
+
         // ROI Balken Logik (darf nicht negativ sein für Visual)
         const roiWidth = (netRoi / maxVal * 100);
         document.getElementById('bar-roi').style.width = (roiWidth > 0 ? roiWidth : 0) + "%";
@@ -531,7 +531,4 @@ html_content = """<!DOCTYPE html>
 </script>
 
 </body>
-</html>"""
-
-with open("staffbase_stihl_roi_dashboard.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
+</html>
