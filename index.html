@@ -1,4 +1,4 @@
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -47,6 +47,8 @@ html_content = """<!DOCTYPE html>
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
             margin-bottom: 2.5rem;
             padding: 0 0.5rem;
         }
@@ -54,6 +56,7 @@ html_content = """<!DOCTYPE html>
         .header-title h1 {
             font-family: 'Outfit', sans-serif;
             font-size: 2.25rem;
+            line-height: 1.1;
             color: var(--staffbase-navy);
             letter-spacing: -0.025em;
         }
@@ -71,6 +74,7 @@ html_content = """<!DOCTYPE html>
             display: flex;
             align-items: center;
             gap: 8px;
+            white-space: nowrap;
         }
 
         .logo-placeholder span {
@@ -109,6 +113,30 @@ html_content = """<!DOCTYPE html>
             letter-spacing: 0.05em;
         }
 
+        /* Collapsible Variablen panel.
+           Desktop: locked open, renders exactly like the old static heading.
+           Mobile: a tappable header that folds the sliders away (see media query). */
+        .variables-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            list-style: none;          /* hide default disclosure triangle */
+            pointer-events: none;      /* not collapsible on desktop */
+        }
+
+        .variables-summary::-webkit-details-marker { display: none; }
+        .variables-summary::marker { content: ""; }
+
+        .vp-chevron {
+            flex-shrink: 0;
+            color: var(--text-muted);
+            transition: transform 0.2s ease;
+            display: none;             /* shown only on mobile */
+        }
+
+        .variables-panel[open] .vp-chevron { transform: rotate(180deg); }
+
         .input-group {
             margin-bottom: 1.75rem;
         }
@@ -117,6 +145,7 @@ html_content = """<!DOCTYPE html>
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 0.75rem;
             margin-bottom: 0.75rem;
         }
 
@@ -127,6 +156,7 @@ html_content = """<!DOCTYPE html>
         }
 
         .value-badge {
+            flex-shrink: 0;
             background: #FFF7ED;
             color: var(--stihl-orange);
             padding: 0.25rem 0.75rem;
@@ -134,11 +164,13 @@ html_content = """<!DOCTYPE html>
             font-weight: 700;
             font-size: 0.875rem;
             border: 1px solid #FFEDD5;
+            white-space: nowrap;
         }
 
         /* Range Slider Styling */
         input[type=range] {
             -webkit-appearance: none;
+            appearance: none;
             width: 100%;
             background: transparent;
         }
@@ -153,6 +185,14 @@ html_content = """<!DOCTYPE html>
             border-radius: 3px;
         }
 
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: var(--border-light);
+            border-radius: 3px;
+        }
+
         input[type=range]::-webkit-slider-thumb {
             height: 20px;
             width: 20px;
@@ -160,12 +200,28 @@ html_content = """<!DOCTYPE html>
             background: var(--stihl-orange);
             cursor: pointer;
             -webkit-appearance: none;
+            appearance: none;
             margin-top: -7px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: transform 0.2s;
         }
 
+        input[type=range]::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border: none;
+            border-radius: 50%;
+            background: var(--stihl-orange);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
         input[type=range]:active::-webkit-slider-thumb {
+            transform: scale(1.2);
+        }
+
+        input[type=range]:active::-moz-range-thumb {
             transform: scale(1.2);
         }
 
@@ -183,16 +239,13 @@ html_content = """<!DOCTYPE html>
             gap: 1.5rem;
         }
 
-        @media (max-width: 640px) {
-            .kpi-grid { grid-template-columns: 1fr; }
-        }
-
         .kpi-card {
             background: var(--card-white);
             padding: 1.5rem;
             border-radius: 1rem;
             border: 1px solid var(--border-light);
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            min-width: 0;
         }
 
         .kpi-card.highlight {
@@ -233,6 +286,7 @@ html_content = """<!DOCTYPE html>
             padding: 1.5rem;
             border-radius: 1rem;
             border: 1px solid #DBEAFE;
+            min-width: 0;
         }
 
         .be-item.success {
@@ -241,6 +295,7 @@ html_content = """<!DOCTYPE html>
         }
 
         .be-icon-circle {
+            flex-shrink: 0;
             width: 54px;
             height: 54px;
             background: white;
@@ -251,6 +306,8 @@ html_content = """<!DOCTYPE html>
             font-size: 1.5rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
+
+        .be-content { min-width: 0; }
 
         .be-content h4 {
             font-size: 0.875rem;
@@ -290,6 +347,7 @@ html_content = """<!DOCTYPE html>
         .bar-info {
             display: flex;
             justify-content: space-between;
+            gap: 0.75rem;
             margin-bottom: 0.5rem;
             font-size: 0.875rem;
             font-weight: 600;
@@ -341,6 +399,97 @@ html_content = """<!DOCTYPE html>
             margin-left: auto;
             margin-right: auto;
         }
+
+        /* --- Tablet --- */
+        @media (max-width: 768px) {
+            .be-visual-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- Mobile --- */
+        @media (max-width: 640px) {
+            body {
+                padding: 1.25rem 0.875rem;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+                margin-bottom: 1.75rem;
+                padding: 0;
+            }
+
+            .header-title h1 {
+                font-size: 1.75rem;
+            }
+
+            .header-title p {
+                font-size: 1rem;
+            }
+
+            .logo-placeholder {
+                font-size: 1.25rem;
+            }
+
+            .dashboard-grid {
+                gap: 1.25rem;
+            }
+
+            .card-sidebar {
+                padding: 1.25rem 1.25rem;
+            }
+
+            /* Make the panel collapsible and obviously tappable */
+            .variables-summary {
+                pointer-events: auto;
+                cursor: pointer;
+                margin-bottom: 1.25rem;
+            }
+
+            .variables-panel:not([open]) .variables-summary {
+                margin-bottom: 0;      /* no dangling gap when collapsed */
+            }
+
+            .vp-chevron {
+                display: block;
+            }
+
+            /* Compact sliders so the controls don't crowd out the results */
+            .input-group {
+                margin-bottom: 1.125rem;
+            }
+
+            .label-row {
+                margin-bottom: 0.4rem;
+            }
+
+            .results-main {
+                gap: 1.25rem;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .kpi-card {
+                padding: 1.25rem;
+            }
+
+            .kpi-card .kpi-value {
+                font-size: 1.625rem;
+            }
+
+            .chart-card {
+                padding: 1.5rem;
+            }
+
+            footer {
+                margin-top: 2.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -358,8 +507,14 @@ html_content = """<!DOCTYPE html>
 
     <div class="dashboard-grid">
         <aside class="card-sidebar">
-            <h2 class="section-heading">Variablen</h2>
-            
+            <details class="variables-panel" open>
+                <summary class="section-heading variables-summary">
+                    <span>Variablen</span>
+                    <svg class="vp-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </summary>
+
+                <div class="variables-body">
+
             <div class="input-group">
                 <div class="label-row">
                     <label for="employees">Schichtmitarbeiter</label>
@@ -399,10 +554,13 @@ html_content = """<!DOCTYPE html>
                 </div>
                 <input type="range" id="reduction" min="0.5" max="12" step="0.5" value="5.0">
             </div>
+
+                </div>
+            </details>
         </aside>
 
         <main class="results-main">
-            
+
             <div class="kpi-grid">
                 <div class="kpi-card">
                     <div class="kpi-label">Ausfallkosten (IST)</div>
@@ -467,7 +625,7 @@ html_content = """<!DOCTYPE html>
 <script>
     // Slider und Labels
     const sliders = ['employees', 'sickdays', 'daycost', 'appcost', 'reduction'];
-    
+
     function formatCurrency(val) {
         if (val >= 1000000) return (val / 1000000).toFixed(1).replace('.', ',') + ' Mio €';
         return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val);
@@ -494,7 +652,7 @@ html_content = """<!DOCTYPE html>
         const savedDays = totalSickDays * red;
         const grossSavings = savedDays * dc;
         const netRoi = grossSavings - ac;
-        
+
         const beDaysTotal = ac / dc;
         const beRatio = emp / beDaysTotal;
 
@@ -515,7 +673,7 @@ html_content = """<!DOCTYPE html>
 
         // Balkenbreiten (CSS Width)
         document.getElementById('bar-new').style.width = ((currentCost - grossSavings) / maxVal * 100) + "%";
-        
+
         // ROI Balken Logik (darf nicht negativ sein für Visual)
         const roiWidth = (netRoi / maxVal * 100);
         document.getElementById('bar-roi').style.width = (roiWidth > 0 ? roiWidth : 0) + "%";
@@ -531,7 +689,4 @@ html_content = """<!DOCTYPE html>
 </script>
 
 </body>
-</html>"""
-
-with open("staffbase_stihl_roi_dashboard.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
+</html>
